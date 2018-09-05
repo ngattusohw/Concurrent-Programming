@@ -18,6 +18,13 @@ public class PrimeFinder implements Runnable{
 	public List<Integer> getPrimesList(){
 		return primes;
 	}
+	
+	public void printPrimeList() {
+		System.out.println("The Primes for this thread are");
+		for(Integer yeet: primes) {
+			System.out.println(yeet + ",");
+		}
+	}
 
 	// Determines whether its argument is prime or not
 	public Boolean isPrime(int n){
