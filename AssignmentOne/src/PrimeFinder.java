@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * I pledge my honor that I have abided by the stevens honor system
+ */
 public class PrimeFinder implements Runnable{
 
-	private Integer start ;
-	private Integer end ;
+	private Integer start;
+	private Integer end;
 	private List<Integer> primes;
 	
 	// Constructs a PrimeFinder
@@ -19,16 +22,9 @@ public class PrimeFinder implements Runnable{
 		return primes;
 	}
 	
-	public void printPrimeList() {
-		System.out.println("The Primes for this thread are");
-		for(Integer yeet: primes) {
-			System.out.println(yeet + ",");
-		}
-	}
-
 	// Determines whether its argument is prime or not
 	public Boolean isPrime(int n){
-	    if (n%2==0) {
+	    if (n%2==0 && n!=2) {
 	    	return false;
 	    }
 	    for(int i=3;(i*i)<=n;i+=2) {
@@ -41,19 +37,10 @@ public class PrimeFinder implements Runnable{
 	
 	// Adds all primes in [ this . start , this . end ) to the attribute primes
 	public void run () {
-		System.out.println("This is me, I am in the thread!");
-		for(int s=start;s<=end;s++) {
+		for(int s=start;s<end;s++) {
 			if(isPrime(s)) {
 				primes.add(s);
 			}
 		}
 	}
-	
-//	public static void main(String args[]) {
-//		
-//	}
-	
-//	Runnable runnable = new PrimeFinder(start,end);
-//	Thread thread = new Thread(runnable);
-//	thread.start();
 }

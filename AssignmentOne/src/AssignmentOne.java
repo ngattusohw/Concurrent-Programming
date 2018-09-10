@@ -5,36 +5,69 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class AssignmentOne extends PrimeFinder{
 
-	
-	
-	//default constructer
-	public AssignmentOne() {
-		super(1,2);
-	}
+/*
+ * Nick Gattuso
+ * I pledge my honor that I have abided by the stevens honor system
+ */
+public class AssignmentOne{
+	public static boolean meetsCriteria(List<Integer[]> list){
+		if(list.size()!= 0) {
+			int[] arr = new int[list.size() + 1];
+			int arrIterator = 0;
+			int last = -1; // this will always be overwritten
+			for(Integer[] hold : list) {
+				arr[arrIterator] = hold[0];
+				arrIterator++;
+				last = hold[1];
+			}
+			arr[arrIterator] = last;
+			
+		    for(int i=0; i < arr.length -1;i++){
+		        if(arr[i]>arr[i + 1]) {
+		        	return false;
+		        }else if(arr[i] < 2) {
+		        	return false;
+		        }
+		    }
+		    return true;
+		}else {
+			System.out.println("Providied List has no items!");
+			return false;
+		} 
+	 }
 	
 	
 	//List<Integer[]> intervals
 	public static List<Integer> lprimes(List<Integer[]> intervals){
 		List<Integer> finalAnswer;
 		
-		
-		ExecutorService es = Executors.newCachedThreadPool();
+		//ExecutorService es = Executors.newCachedThreadPool();
 		List<PrimeFinder> classList = new ArrayList<PrimeFinder>();
+		List<Thread> threadList = new ArrayList<Thread>();
 		for(Integer[] temparr : intervals) {
 			classList.add(new PrimeFinder(temparr[0],temparr[1]));
-			es.execute(classList.get(classList.size()-1));
+			threadList.add(new Thread(classList.get(classList.size()-1)));
+			threadList.get(threadList.size()-1).start();
+			//es.execute(classList.get(classList.size()-1));
 		}
-		es.shutdown();
+		//es.shutdown();
 		
 		
-		try {
-			while(!es.awaitTermination(1, TimeUnit.MINUTES)){}
-			System.out.println("I am all done!");
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+//		try {
+//			while(!es.awaitTermination(1, TimeUnit.MINUTES)){}
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
+		for(Thread t : threadList) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		finalAnswer = new ArrayList<Integer>();
@@ -44,34 +77,36 @@ public class AssignmentOne extends PrimeFinder{
 			}
 		}
 		
-		System.out.print("[");
-		for(Integer print : finalAnswer) {
-			System.out.print(print + ",");
-		}
-		System.out.println("]");
-		// all tasks have finished or the time has been reached.)
-//		for(int i=0;i<5;i++)
-//		    es.execute(new Runnable() { /*  your task */ });
-//		es.shutdown();
-		
-		return null;
+		return finalAnswer;
 	}
 	
 	public static void main(String args[]) {
-		System.out.println("Whats up fuckers!");
-		List<Integer[]> myList = new ArrayList<Integer[]>();
-		Integer[] fuck = {2,101};
-		Integer[] fuckyou = {101,201};
-		Integer[] fuckyou1 ={201,301};
-		Integer[] fuckyou2 ={301,401};
-		Integer[] fuckyou3 ={401,501};
-		//List<int[]> fuckkkkkk = Arrays.asList({2,101},{101,201},{201,301},{301,401});
-		myList.add(fuck);
-		myList.add(fuckyou);
-		myList.add(fuckyou1);
-		myList.add(fuckyou2);
-		myList.add(fuckyou3);
-		lprimes(myList);
+		if(args.length % 2 == 0){
+			List<Integer[]> myList = new ArrayList<Integer[]>();
+			for(int argsIterator = 0; argsIterator < args.length -1; argsIterator= argsIterator + 1){
+				Integer[] temp = {Integer.parseInt(args[argsIterator]), Integer.parseInt(args[argsIterator+1])};
+				myList.add(temp);
+			}
+			if(meetsCriteria(myList)) {
+				List<Integer> thelprimes = lprimes(myList);
+				
+				System.out.print("[");
+				boolean isFirstNumber = true;
+				for(Integer print : thelprimes) {
+					if(isFirstNumber) {
+						System.out.print(print);
+					}else{
+						System.out.print("," + print);
+					}
+					isFirstNumber=false;
+				}
+				System.out.println("]");
+			}else {
+				System.out.println("List was not in increasing order!");
+			}
+		}else {
+			System.out.println("Invalid amount of inputs!");
+		}
 	}
 }
 
