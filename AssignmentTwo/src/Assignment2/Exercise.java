@@ -9,15 +9,26 @@ public class Exercise {
 	private Map<WeightPlateSize, Integer> weight;
 	private int duration;
 	
-	
 	public Exercise(ApparatusType at, Map<WeightPlateSize, Integer> weight, int duration) {
 		this.at = at;
 		this.weight = weight;
 		this.duration = duration;
 	}
 	
+	public ApparatusType getApparatusType(){
+		return this.at;
+	}
+	
+	public Map<WeightPlateSize, Integer> getWeight(){
+		return this.weight;
+	}
+	
+	public int getDuration(){
+		return this.duration;
+	}
+	
 	public static Exercise generateRandom(Map<WeightPlateSize, Integer> weight) {
 		ApparatusType randomApparatus = ApparatusType.getRandom();
-		return new Exercise(randomApparatus, weight, 8);
+		return new Exercise(randomApparatus, weight, 1);
 	}
 }

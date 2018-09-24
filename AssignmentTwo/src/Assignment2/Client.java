@@ -20,9 +20,9 @@ public class Client implements Runnable{
 		this.routine = new ArrayList<Exercise>();
 	}
 	
-	public static void instansiateSemaphores() {
+	public static void instantiateSemaphores() {
 		mutexLock = new Semaphore(1);
-		printing = new Semaphore(1);
+		printing = new Semaphore(1, true);
 		apparatusSemaphore = new Semaphore[8];
 		for(int x = 0; x < 8; x++) {
 			apparatusSemaphore[x] = new Semaphore(5);
@@ -89,7 +89,47 @@ public class Client implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		
-		
+		for(Exercise the_exercise : routine){
+			int duration = the_exercise.getDuration();
+			Map<WeightPlateSize, Integer> weight = the_exercise.getWeight();
+			int at_index = the_exercise.getApparatusType().ordinal();
+			List<Integer> listWeight = new ArrayList<>(weight.values());
+			
+			try {
+				mutexLock.acquire();
+				apparatusSemaphore[at_index].acquire();
+				for(int weightType = 0; weightType < 3; weightType++) {
+					for(int amountOfWeights = 0; amountOfWeights < listWeight.get(weightType); amountOfWeights++) {
+						//do the acquires here for each weight
+						weightSemaphore[weightType].acquire();
+					}
+				}
+				
+				printing.acquire();
+				System.out.printf("Client %d has started working out with the %s with %d small weights, %d medium weights , %d large weights \n",
+						this.id, the_exercise.getApparatusType().toString(),listWeight.get(0),listWeight.get(1),listWeight.get(2));
+				printing.release();
+				mutexLock.release();
+				
+				Thread.sleep(duration);
+				printing.acquire();
+				
+			}catch(Exception e) {
+				System.out.println("There was an error!");
+				System.exit(0);
+			}
+			
+			System.out.printf("Client %d has stopped working out with the %s with %d small weights, %d medium weights , %d large weights \n",
+					this.id, the_exercise.getApparatusType().toString(),listWeight.get(0),listWeight.get(1),listWeight.get(2));
+			printing.release();
+			apparatusSemaphore[at_index].release();
+			for(int weightType = 0; weightType < 3; weightType++) {
+				for(int amountOfWeights = 0; amountOfWeights < listWeight.get(weightType); amountOfWeights++) {
+					//do the release here for each weight
+					weightSemaphore[weightType].release();
+				}
+			}
+			
+		}
 	}
-	
 }
