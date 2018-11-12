@@ -1,0 +1,19 @@
+
+
+monitor barrierMonitor {
+	Condition con;
+	int count = 0;
+	//N
+	wait(){
+		count++;
+		while(count < N){
+			con.wait();
+		}
+		con.signalAll();
+	}
+
+
+}
+
+
+

@@ -1,0 +1,35 @@
+monitor PizzaShop {
+	int smallPizza = 0;
+	int largePizza = 0;
+	condition waitForSmallPizza;
+	condition waitForLargePizza;
+	
+	bakeSmallPizza() {
+		smallPizza++;
+		waitForSmallPizza.signal();
+		waitForLargePizza.signal();
+	}
+
+	bakeLargePizza(){
+		largePizza++;
+		waitForLargePizza.signal();
+	}
+
+	buySmallPizza(){
+		while(smallPizza==0){
+			waitForSmallPizza.wait();
+		}		
+		smallPizza--;	
+	}
+
+	buyLargePizza(){
+		while(large==0 && small<2){
+			waitForLargePizza.wait();
+		}
+		if(largePizza > 0){
+			largePizza--;
+		}else{
+			smallPizza-=2;
+		}
+	}
+}

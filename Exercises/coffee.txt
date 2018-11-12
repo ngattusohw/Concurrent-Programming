@@ -1,0 +1,22 @@
+
+Semaphore buttons = new Semaphore(2);
+Semaphore mutex = new Semaphore(1);
+
+thread Client {
+	buttons.acquire();
+	//coffee boi
+	buttons.release();
+
+}
+
+thread Employee{
+	while(true){
+		mutex.acquire();
+		repeat(2) { buttons.acquire(); }
+		mutex.release();
+
+		//refill
+		repeat(2) { buttons.release(); }
+	}
+
+}

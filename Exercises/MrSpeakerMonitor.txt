@@ -1,0 +1,40 @@
+
+
+monitor PizzaTime {
+	int smallPizza;
+	int largePizza;
+
+	Condition waitForSmallPizza;
+	Condition waitForLargePizza;
+
+	bakeSmallPizza(){
+		smallPizza++;
+		waitForSmallPizza.signal();
+		waitForLargePizza.signal();
+	}
+
+	bakeLargePizza(){
+		largePizza++;
+		waitForLargePizza.signal();
+	}
+
+	orderSmallPizza(){
+		while(smallPizza == 0){
+			waitForSmallPizza.wait();
+		}
+		smallPizza--;
+	}
+
+	orderLargePizza(){
+		while(largePizza == 0 && smallPizza<2){
+			waitForLargePizza.wait();
+		}
+
+		if(largePizza){
+			largePizza--;
+		}else{
+			smallPizza-=2;		
+		}
+	} 
+
+}
